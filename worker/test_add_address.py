@@ -1,61 +1,62 @@
-import unittest
-from unittest.mock import patch, MagicMock
 import requests
 from tasks import add_address
 
 
-class AddAddressTestCase(unittest.TestCase):
+def test_add_address_success(mocker):
+    mock_location_data = {
+        "results": [{
+            "location": {
+                "country": "USA",
+                "state": "California",
+                "city": "Los Angeles",
+                "street": {"name": "Sunset Blvd", "number": 123},
+                "postcode": 90001
+            }
+        }]
+    }
 
-    @patch('tasks.requests.get')
-    @patch('tasks.requests.post')
-    @patch('tasks.random.choice', return_value=1)
-    def test_add_address_success(self, mock_choice, mock_post, mock_get):
-        mock_location_data = {
-            "results": [{
-                "location": {
-                    "country": "USA",
-                    "state": "California",
-                    "city": "Los Angeles",
-                    "street": {"name": "Sunset Blvd", "number": 123},
-                    "postcode": 90001
-                }
-            }]
-        }
+    mock_user_list = [{"id": 1}, {"id": 2}]
 
-        mock_user_list = [{"id": 1}, {"id": 2}]
+    mocker.patch("tasks.random.choice", return_value=1)
 
-        mock_get.side_effect = [
-            MagicMock(status_code=200, json=lambda: mock_location_data),
-            MagicMock(status_code=200, json=lambda: mock_user_list)
-        ]
+    mock_get = mocker.patch("tasks.requests.get")
+    mock_post = mocker.patch("tasks.requests.post")
 
-        mock_post.return_value = MagicMock(status_code=201, json=lambda: {"id": 1})
+    mock_get.side_effect = [
+        mocker.MagicMock(status_code=200, json=lambda: mock_location_data),
+        mocker.MagicMock(status_code=200, json=lambda: mock_user_list)
+    ]
 
-        result = add_address()
-        self.assertEqual(result, {"id": 1})
+    mock_post.return_value = mocker.MagicMock(status_code=201, json=lambda: {"id": 1})
 
-    @patch('tasks.requests.get')
-    def test_add_address_randomuser_api_fail(self, mock_get):
-        mock_get.side_effect = requests.RequestException("Network error")
-        result = add_address()
-        self.assertIsNone(result)
+    result = add_address()
+    assert result == {"id": 1}
 
-    @patch('tasks.requests.get')
-    def test_add_address_user_api_fail(self, mock_get):
-        mock_get.side_effect = [
-            MagicMock(status_code=200, json=lambda: {"results": [{"location": {}}]}),
-            requests.RequestException("Failed fetching users")
-        ]
-        result = add_address()
-        self.assertIsNone(result)
 
-    @patch('tasks.requests.get')
-    @patch('tasks.requests.post')
-    @patch('tasks.random.choice', return_value=1)
-    def test_add_address_invalid_json(self, mock_choice, mock_post, mock_get):
-        mock_get.side_effect = [
-            MagicMock(status_code=200, json=lambda: {"results": [{"location": {"city": "Kyiv"}}]}),
-            MagicMock(status_code=200, json=lambda: [{"id": 1}])
-        ]
-        result = add_address()
-        self.assertIsNone(result)
+def test_add_address_randomuser_api_fail(mocker):
+    mocker.patch("tasks.requests.get", side_effect=requests.RequestException("Network error"))
+    result = add_address()
+    assert result is None
+
+
+def test_add_address_user_api_fail(mocker):
+    mock_get = mocker.patch("tasks.requests.get")
+    mock_get.side_effect = [
+        mocker.MagicMock(status_code=200, json=lambda: {"results": [{"location": {}}]}),
+        requests.RequestException("Failed fetching users")
+    ]
+    result = add_address()
+    assert result is None
+
+
+def test_add_address_invalid_json(mocker):
+    mocker.patch("tasks.random.choice", return_value=1)
+
+    mock_get = mocker.patch("tasks.requests.get")
+    mock_get.side_effect = [
+        mocker.MagicMock(status_code=200, json=lambda: {"results": [{"location": {"city": "Kyiv"}}]}),
+        mocker.MagicMock(status_code=200, json=lambda: [{"id": 1}])
+    ]
+
+    result = add_address()
+    assert result is None
