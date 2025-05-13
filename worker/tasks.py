@@ -4,6 +4,9 @@ import random
 
 app = Celery('tasks', broker='redis://redis', backend='redis://redis')
 
+headers = {
+    'User-Agent': 'Mozilla/5.0 (compatible; MyApp/1.0)'
+}
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender: Celery, **kwargs):
@@ -15,7 +18,7 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
 @app.task
 def add_user():
     try:
-        response = requests.get('https://randomuser.me/api/')
+        response = requests.get('https://randomuser.me/api/', headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to fetch user data: {e}")
@@ -46,7 +49,7 @@ def add_user():
 @app.task
 def add_address():
     try:
-        response = requests.get('https://randomuser.me/api/')
+        response = requests.get('https://randomuser.me/api/', headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to fetch user data: {e}")
