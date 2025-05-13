@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Credit Cards</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User id</th>
+                <th>Card Number</th>
+                <th>CVV</th>
+                <th>Expiration Date</th>
+                <th>Bank Name</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for card in cards %}
+                <tr>
+                    <td>{{ card.id }}</td>
+                    <td>{{ card.user_id.id }}</td>
+                    <td>{{ card.card_number }}</td>
+                    <td>{{ card.cvv }}</td>
+                    <td>{{ card.expiration_date }}</td>
+                    <td>{{ card.bank_name }}</td>
+                    <td>{{ card.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

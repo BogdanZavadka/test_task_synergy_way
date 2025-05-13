@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# Celery
+celerybeat-schedule
+*.log
+
+# Docker
+*.pid
+*.tar
+*.gz
+docker-compose.override.yml
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+*.env
+
+# Pytest
+.pytest_cache/
+htmlcov/
+coverage.xml
+.cache/
+
+# Migrations (опційно, якщо ти не хочеш трекати їх одразу)
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py
