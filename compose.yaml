@@ -16,7 +16,7 @@ services:
   django-web:
     build: test_task_django_project
     container_name: django-docker
-    command: sh -c "python3 manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python3 manage.py makemigrations && python3 manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     depends_on:
