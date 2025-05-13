@@ -17,7 +17,7 @@ class Address(models.Model):
     city = models.CharField(max_length=20)
     street = models.CharField(max_length=50)
     house_number = models.IntegerField()
-    postal_code = models.IntegerField(null=True)
+    postal_code = models.CharField(max_length=20, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CreditCard(models.Model):

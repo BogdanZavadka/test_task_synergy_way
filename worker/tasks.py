@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from celery import Celery
 import requests
 import random
@@ -18,19 +20,19 @@ def setup_periodic_tasks(sender: Celery, **kwargs):
 @app.task
 def add_user():
     try:
-        response = requests.get('https://randomuser.me/api/', headers=headers)
+        response = requests.get('https://fakerapi.it/api/v2/persons?_quantity=1', headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to fetch user data: {e}")
         return None
 
     try:
-        response_result_json = response.json()['results'][0]
+        response_result_json = response.json()['data'][0]
         data = {
-            "first_name": response_result_json['name']['first'],
-            "last_name": response_result_json['name']['last'],
+            "first_name": response_result_json['firstname'],
+            "last_name": response_result_json['lastname'],
             "gender": response_result_json['gender'],
-            "age": response_result_json['dob']['age'],
+            "age": datetime.today().year - datetime.strptime(response_result_json['birthday'], "%Y-%m-%d").year,
             "phone_number": response_result_json['phone'],
             "email": response_result_json['email']
         }
@@ -49,7 +51,7 @@ def add_user():
 @app.task
 def add_address():
     try:
-        response = requests.get('https://randomuser.me/api/', headers=headers)
+        response = requests.get('https://fakerapi.it/api/v2/addresses?_quantity=1', headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Failed to fetch user data: {e}")
@@ -65,15 +67,14 @@ def add_address():
     users_ids = [user['id'] for user in users.json()]
 
     try:
-        response_result_json = response.json()['results'][0]['location']
+        response_result_json = response.json()['data'][0]
         data = {
             "user_id": random.choice(users_ids),
             "country": response_result_json['country'],
-            "region": response_result_json['state'],
             "city": response_result_json['city'],
-            "street": response_result_json['street']['name'],
-            "house_number": response_result_json['street']['number'],
-            "postal_code": response_result_json['postcode']
+            "street": response_result_json['streetName'],
+            "house_number": response_result_json['buildingNumber'],
+            "postal_code": response_result_json['zipcode']
         }
         post_response = requests.post('http://django-web:8000/api/addresses/create', data=data)
         post_response.raise_for_status()

@@ -4,10 +4,11 @@ from tasks import add_user
 
 def mock_user_data():
     return {
-        "results": [{
-            "name": {"first": "John", "last": "Doe"},
+        "data": [{
+            "firstname": "John",
+            "lastname": "Doe",
             "gender": "male",
-            "dob": {"age": 30},
+            "birthday": "2005-05-05",
             "phone": "1234567890",
             "email": "john.doe@example.com"
         }]

@@ -4,14 +4,12 @@ from tasks import add_address
 
 def test_add_address_success(mocker):
     mock_location_data = {
-        "results": [{
-            "location": {
-                "country": "USA",
-                "state": "California",
-                "city": "Los Angeles",
-                "street": {"name": "Sunset Blvd", "number": 123},
-                "postcode": 90001
-            }
+        "data": [{
+            "country": "USA",
+            "city": "Los Angeles",
+            "streetName": "Sunset Blvd",
+            "buildingNumber": 123,
+            "zipcode": 90001
         }]
     }
 
